@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace Agreement
 {
@@ -26,6 +27,34 @@ namespace Agreement
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            var contact = new OpenApiContact()
+            {
+                Name = "FirstName LastName",
+                Email = "user@example.com",
+                Url = new Uri("http://www.example.com")
+            };
+
+            var license = new OpenApiLicense()
+            {
+                Name = "My License",
+                Url = new Uri("http://www.example.com")
+            };
+
+            var info = new OpenApiInfo()
+            {
+                Version = "v1",
+                Title = "Swagger Demo API",
+                Description = "Swagger Demo API Description",
+                TermsOfService = new Uri("http://www.example.com"),
+                Contact = contact,
+                License = license
+            };
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", info);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +70,13 @@ namespace Agreement
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                "Swagger Demo API v1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
