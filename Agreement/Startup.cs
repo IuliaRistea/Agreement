@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Agreement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,7 +28,14 @@ namespace Agreement
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
+
+            var connectionString = Configuration["connectionStrings:agreementDbConnectionString"];
+            // Every time an instance of AgreementDbContext is requested instead of creating a brand new instance asp.net core checks 
+            // if there is an instance available in the dbContextPool, if it is => that istance is returned.
+            services.AddDbContextPool<AgreementDbContext>(options => options.UseSqlServer(connectionString));
+            Console.WriteLine(connectionString);
 
             var contact = new OpenApiContact()
             {
