@@ -35,7 +35,6 @@ namespace Agreement
             // Every time an instance of AgreementDbContext is requested instead of creating a brand new instance asp.net core checks 
             // if there is an instance available in the dbContextPool, if it is => that istance is returned.
             services.AddDbContextPool<AgreementDbContext>(options => options.UseSqlServer(connectionString));
-            Console.WriteLine(connectionString);
 
             var contact = new OpenApiContact()
             {

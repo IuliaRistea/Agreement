@@ -10,8 +10,7 @@ namespace Agreement.Migrations
                 name: "Agreements",
                 columns: table => new
                 {
-                    CNPCUI = table.Column<int>(type: "int", maxLength: 7, nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CNPCUI = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
                     Nume = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Prenume = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DenumireCompanie = table.Column<string>(type: "nvarchar(max)", nullable: true),

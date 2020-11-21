@@ -9,7 +9,7 @@ namespace Agreement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class APIController : ControllerBase
     {
         [HttpGet]
         public IEnumerable<string> Get()

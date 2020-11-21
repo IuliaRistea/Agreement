@@ -16,7 +16,7 @@ namespace Agreement.Services
             Database.Migrate();
         }
 
-        public virtual  DbSet<AgreementEntity> Agreements { get; set; }
+        public virtual  DbSet<AgreementModel> Agreements { get; set; }
     }
 
 }

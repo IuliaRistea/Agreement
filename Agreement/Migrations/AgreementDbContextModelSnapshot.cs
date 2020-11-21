@@ -18,13 +18,11 @@ namespace Agreement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("Agreement.Models.AgreementEntity", b =>
+            modelBuilder.Entity("Agreement.Models.AgreementModel", b =>
                 {
-                    b.Property<int>("CNPCUI")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("CNPCUI")
                         .HasMaxLength(7)
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("nvarchar(7)");
 
                     b.Property<bool>("AcordPrelucrareDate")
                         .HasColumnType("bit");

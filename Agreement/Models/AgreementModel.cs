@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Agreement.Models
 {
-    public class AgreementEntity
+    public class AgreementModel
     {
         [Key]
         [StringLength(maximumLength:7, MinimumLength = 7, ErrorMessage = "Codul unic are lungime invalida.")]
-        public int CNPCUI { get; set; }
+        public string CNPCUI { get; set; }
         public string Nume { get; set; }
         public string Prenume { get; set; }
         public string DenumireCompanie { get; set; }
