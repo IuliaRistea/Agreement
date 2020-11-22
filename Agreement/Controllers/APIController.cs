@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Agreement.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VMD.RESTApiResponseWrapper.Core.Wrappers;
 
 namespace Agreement.Controllers
 {
@@ -26,10 +28,15 @@ namespace Agreement.Controllers
             //return "hello";
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{uniqueId}")]
+        public ActionResult<string> Get(string uniqueId)
         {
-            return "Hello";
+            APIResponse response = _businessService.GetAgreementModel(uniqueId); 
+            if (response.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                return NotFound();
+            }
+            return Ok((string)response.Result);
         }
 
         [HttpPost]
