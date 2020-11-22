@@ -30,11 +30,12 @@ namespace Agreement
         {
 
             services.AddControllers();
+            //services.AddMvc();
 
             var connectionString = Configuration["connectionStrings:agreementDbConnectionString"];
-            // Every time an instance of AgreementDbContext is requested instead of creating a brand new instance asp.net core checks 
-            // if there is an instance available in the dbContextPool, if it is => that istance is returned.
-            services.AddDbContextPool<AgreementDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<AgreementDbContext>(options =>  options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+            services.AddSingleton<IAgreementRepository, AgreementRepository>();
+            services.AddSingleton<IBusinessService,BusinessService>();
 
             var contact = new OpenApiContact()
             {

@@ -10,17 +10,18 @@ using Agreement.Services;
 
 namespace Agreement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AgreementController : ControllerBase
     {
+      
+
         private readonly AgreementDbContext _context;
 
         public AgreementController(AgreementDbContext context)
         {
             _context = context;
         }
-
         // GET: api/Agreement
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AgreementModel>>> GetAgreements()

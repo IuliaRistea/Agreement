@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Agreement.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,18 @@ namespace Agreement.Controllers
     [ApiController]
     public class APIController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private IBusinessService _businessService;
+
+        public APIController(IBusinessService businessService)
         {
-            return new string[]
-                    { "Hello World!",
-                    "Hello Galaxy!",
-                    "Hello Universe!"
-                    };
+            _businessService = businessService;
+        }
+
+        [HttpGet]
+        public string Get()
+        {
+            return _businessService.GetAgreements();
+            //return "hello";
         }
 
         [HttpGet("{id}")]
