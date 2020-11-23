@@ -16,9 +16,9 @@ namespace Agreement.Controllers
     {
       
 
-        private readonly AgreementDbContext _context;
+        private readonly DatabaseContext _context;
 
-        public AgreementController(AgreementDbContext context)
+        public AgreementController(DatabaseContext context)
         {
             _context = context;
         }

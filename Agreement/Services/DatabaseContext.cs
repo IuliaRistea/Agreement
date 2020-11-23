@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace Agreement.Services
 {
-    public class AgreementDbContext: DbContext
+    public class DatabaseContext: DbContext
     {
-        public AgreementDbContext(DbContextOptions<AgreementDbContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
             :base(options)
         {
             Database.Migrate();
         }
 
         public virtual  DbSet<AgreementModel> Agreements { get; set; }
+        public virtual DbSet<ErrorModel> Errors { get; set; }
     }
 
 }

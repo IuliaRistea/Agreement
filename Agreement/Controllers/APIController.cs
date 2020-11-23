@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Agreement.Helpers;
 using Agreement.Models;
 using Agreement.Services;
 using Microsoft.AspNetCore.Http;
@@ -37,7 +38,9 @@ namespace Agreement.Controllers
         public ActionResult<AgreementModel> Get(string uniqueId)
         {
 
-           return _businessService.GetAgreementModel(uniqueId);
+            Result<AgreementModel> result = _businessService.GetAgreementModel(uniqueId);
+            if (result.ResultType == ResultType.NotFound) return NotFound(result.Errors);
+            return result.Data;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Agreement.Models;
+﻿using Agreement.Helpers;
+using Agreement.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Agreement.Services
     public interface IBusinessService
     {
         public ICollection<AgreementModel> GetAgreements();
-        public AgreementModel GetAgreementModel(string uniqueId);
+        public Result<AgreementModel> GetAgreementModel(string uniqueId);
 
         public AgreementModel PostAgreementModel(AgreementModel agreementModel);
 

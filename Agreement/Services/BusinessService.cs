@@ -1,33 +1,38 @@
-﻿using Agreement.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Agreement.Helpers;
+using Agreement.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 
 namespace Agreement.Services
 {
     public class BusinessService : IBusinessService
     {
         private IAgreementRepository _agreementRepository;
+        private IErrorService _errorService;
 
-        public BusinessService(IAgreementRepository agreementRepository)
+        public BusinessService(IAgreementRepository agreementRepository, IErrorService errorService)
         {
             _agreementRepository = agreementRepository;
+            _errorService = errorService;
         }
 
         public ICollection<AgreementModel> GetAgreements()
         {
+
             return _agreementRepository.GetAgreements();
         }
 
-        public AgreementModel GetAgreementModel(string uniqueId)
+        public Result<AgreementModel> GetAgreementModel(string uniqueId)
         {
             var agreementModel = _agreementRepository.GetAgreement(uniqueId);
-            return agreementModel;
+            if (agreementModel == null)
+            {
+                Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
+                if (_errorService.AddError(uniqueId, result, RequestType.Get) == false)
+                    Console.WriteLine("Errors service failed");
+                return result;
+            }
+            return new SuccessResult<AgreementModel>(agreementModel);
         }
 
 

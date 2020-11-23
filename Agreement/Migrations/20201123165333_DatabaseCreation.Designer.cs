@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Agreement.Migrations
 {
-    [DbContext(typeof(AgreementDbContext))]
-    [Migration("20201121211838_InitialDatabaseCreation")]
-    partial class InitialDatabaseCreation
+    [DbContext(typeof(DatabaseContext))]
+    [Migration("20201123165333_DatabaseCreation")]
+    partial class DatabaseCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,6 +62,31 @@ namespace Agreement.Migrations
                     b.HasKey("CNPCUI");
 
                     b.ToTable("Agreements");
+                });
+
+            modelBuilder.Entity("Agreement.Models.ErrorModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResultType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UniqueId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Errors");
                 });
 #pragma warning restore 612, 618
         }

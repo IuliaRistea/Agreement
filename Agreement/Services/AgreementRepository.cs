@@ -9,9 +9,9 @@ namespace Agreement.Services
 {
     public class AgreementRepository : IAgreementRepository
     {
-        private AgreementDbContext _context;
+        private DatabaseContext _context;
 
-        public AgreementRepository(AgreementDbContext context)
+        public AgreementRepository(DatabaseContext context)
         {
             _context = context;
         }

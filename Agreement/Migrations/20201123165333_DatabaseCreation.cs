@@ -2,7 +2,7 @@
 
 namespace Agreement.Migrations
 {
-    public partial class InitialDatabaseCreation : Migration
+    public partial class DatabaseCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,12 +27,31 @@ namespace Agreement.Migrations
                 {
                     table.PrimaryKey("PK_Agreements", x => x.CNPCUI);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Errors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UniqueId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResultType = table.Column<int>(type: "int", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Errors", x => x.Id);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Agreements");
+
+            migrationBuilder.DropTable(
+                name: "Errors");
         }
     }
 }

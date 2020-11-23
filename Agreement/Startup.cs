@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Agreement.Helpers;
 using Agreement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,8 +34,10 @@ namespace Agreement
            // services.AddMvc();
 
             var connectionString = Configuration["connectionStrings:agreementDbConnectionString"];
-            services.AddDbContext<AgreementDbContext>(options =>  options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+            services.AddDbContext<DatabaseContext>(options =>  options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
             services.AddSingleton<IAgreementRepository, AgreementRepository>();
+            services.AddSingleton<IErrorRepository, ErrorRepository>();
+            services.AddSingleton<IErrorService, ErrorService>();
             services.AddSingleton<IBusinessService,BusinessService>();
 
             var contact = new OpenApiContact()
