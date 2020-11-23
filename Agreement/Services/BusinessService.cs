@@ -31,18 +31,33 @@ namespace Agreement.Services
         }
 
 
-        public HttpResponseMessage PostAgreementModel(string agreementString)
+        public AgreementModel PostAgreementModel(AgreementModel agreementModel)
         {
+            bool success = _agreementRepository.CreateAgreement(agreementModel);
+            if (!success) return null;
 
-            var options = new JsonSerializerOptions()
-            {
-                IncludeFields = true,
-            };
-            AgreementModel agreementModel = JsonSerializer.Deserialize<AgreementModel>(agreementString, options);
-
-            Console.WriteLine(agreementModel.CNPCUI);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            return agreementModel;
         }
 
+        public bool DeleteAgreementModel(string uniqueId)
+        {
+            if (_agreementRepository.AgreementExists(uniqueId) == false)
+                return false;
+            bool success = _agreementRepository.DeleteAgreement(uniqueId);
+            return success;
+        }
+
+        public AgreementModel PutAgreementModel(AgreementModel agreementModel)
+        {
+
+            if (_agreementRepository.AgreementExists(agreementModel.CNPCUI) == false)
+                return null;
+            bool success = _agreementRepository.UpdateAgreement(agreementModel);
+
+            if (!success) return null;
+
+            return agreementModel;
+
+        }
     }
 }

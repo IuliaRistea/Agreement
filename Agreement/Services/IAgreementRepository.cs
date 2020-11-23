@@ -13,7 +13,7 @@ namespace Agreement.Services
         bool AgreementExists(string uniqueId);
         bool CreateAgreement(AgreementModel agreement);
         bool UpdateAgreement(AgreementModel agreement);
-        bool DeleteAgreement(AgreementModel agreement);
+        bool DeleteAgreement(string uniqueId);
         bool Save();
     }
 }

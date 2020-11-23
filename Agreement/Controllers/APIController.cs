@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Agreement.Models;
 using Agreement.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -36,29 +37,57 @@ namespace Agreement.Controllers
         public ActionResult<AgreementModel> Get(string uniqueId)
         {
 
-           return _businessService.GetAgreementModel(uniqueId); 
+           return _businessService.GetAgreementModel(uniqueId);
         }
 
+        /// <summary>
+        /// Creates a TodoItem.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///          "cnpcui": "CNP234",
+        ///          "nume": "Nume",
+        ///          "prenume": "Prenume",
+        ///          "denumireCompanie": null,
+        ///          "judet": "B",
+        ///          "nrTelefon": "5551234",
+        ///          "email": "test@gmail.com",
+        ///          "acordPrelucrareDate": true,
+        ///          "comunicareMarketing": true,
+        ///          "comunicareEmail": true,
+        ///          "comunicareSMS": true,
+        ///          "comunicarePosta": true
+        ///      }
+        ///
+        /// </remarks>
+        /// <param name="item"></param>
+        /// <returns>A newly created TodoItem</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>            
         [HttpPost]
-        public string Post([FromBody] string value)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<AgreementModel> Post(AgreementModel agreementModel)
         {
-            Console.WriteLine(value);
-           // _businessService.PostAgreementModel(value);
-            return "Hello World!";
+            
+            return _businessService.PostAgreementModel(agreementModel); 
         }
 
 
-        [HttpPut("{id}")]
-        public string Put(int id, [FromBody] string value)
+        [HttpPut]
+        public ActionResult<AgreementModel> Put(AgreementModel agreementModel)
         {
-            return "Hello Galaxy!";
+
+            return _businessService.PutAgreementModel(agreementModel);
         }
 
-
-        [HttpDelete("{id}")]
-        public string Delete(int id)
+        [HttpDelete("{uniqueId}")]
+        public bool Delete(string uniqueId)
         {
-            return "Hello Universe!";
+            return _businessService.DeleteAgreementModel(uniqueId);
         }
     }
 }
