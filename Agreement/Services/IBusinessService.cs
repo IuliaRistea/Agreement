@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Agreement.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using VMD.RESTApiResponseWrapper.Core.Wrappers;
 
 namespace Agreement.Services
 {
     public interface IBusinessService
     {
-        public string GetAgreements();
+        public ICollection<AgreementModel> GetAgreements();
+        public AgreementModel GetAgreementModel(string uniqueId);
 
-        public APIResponse GetAgreementModel(string uniqueId);
+        public HttpResponseMessage PostAgreementModel(string agreementString);
     }
 }

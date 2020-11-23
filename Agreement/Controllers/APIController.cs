@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Agreement.Models;
 using Agreement.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VMD.RESTApiResponseWrapper.Core.Wrappers;
+
 
 namespace Agreement.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class APIController : ControllerBase
@@ -22,26 +24,26 @@ namespace Agreement.Controllers
         }
 
         [HttpGet]
-        public string Get()
+        public ICollection<AgreementModel> Get()
         {
             return _businessService.GetAgreements();
-            //return "hello";
         }
 
         [HttpGet("{uniqueId}")]
-        public ActionResult<string> Get(string uniqueId)
+        [ProducesResponseType(typeof(AgreementModel), 200)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(500)]
+        public ActionResult<AgreementModel> Get(string uniqueId)
         {
-            APIResponse response = _businessService.GetAgreementModel(uniqueId); 
-            if (response.StatusCode == (int)HttpStatusCode.NotFound)
-            {
-                return NotFound();
-            }
-            return Ok((string)response.Result);
+
+           return _businessService.GetAgreementModel(uniqueId); 
         }
 
         [HttpPost]
         public string Post([FromBody] string value)
         {
+            Console.WriteLine(value);
+           // _businessService.PostAgreementModel(value);
             return "Hello World!";
         }
 
