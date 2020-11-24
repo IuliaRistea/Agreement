@@ -14,7 +14,7 @@ namespace Agreement.Helpers
         }
         public override ResultType ResultType => ResultType.PermissionDenied;
 
-        public override List<string> Errors => new List<string> { _error ?? "Permission Denied." };
+        public override string Error => _error ?? "Permission Denied." ;
 
         public override T Data => default(T);
     }

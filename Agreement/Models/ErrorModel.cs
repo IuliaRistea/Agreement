@@ -13,13 +13,12 @@ namespace Agreement.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key, Column(Order = 0)]
         public int Id { get; set; }
-        [Required]
         public string UniqueId { get; set; }
         [Required]
-        public ResultType ResultType { get; set; }
+        public string ResultType { get; set; }
         public string ErrorMessage { get; set; }
         [Required]
-        public RequestType RequestType { get; set; }
+        public string RequestType { get; set; }
 
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Agreement.Helpers;
+using Agreement.Interfaces;
 using Agreement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace Agreement
             services.AddSingleton<IAgreementRepository, AgreementRepository>();
             services.AddSingleton<IErrorRepository, ErrorRepository>();
             services.AddSingleton<IErrorService, ErrorService>();
+            services.AddSingleton<IValidatorService, ValidatorService>();
             services.AddSingleton<IBusinessService,BusinessService>();
 
             var contact = new OpenApiContact()

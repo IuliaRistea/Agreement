@@ -14,7 +14,7 @@ namespace Agreement.Helpers
         }
         public override ResultType ResultType => ResultType.Ok;
 
-        public override List<string> Errors => new List<string>();
+        public override string Error => "";
 
         public override T Data => _data;
     }

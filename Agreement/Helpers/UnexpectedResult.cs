@@ -9,7 +9,7 @@ namespace Agreement.Helpers
     {
         public override ResultType ResultType => ResultType.Unexpected;
 
-        public override List<string> Errors => new List<string> { "There was an unexpected problem" };
+        public override string Error => "There was an unexpected problem";
 
         public override T Data => default(T);
     }

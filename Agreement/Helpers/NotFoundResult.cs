@@ -14,7 +14,7 @@ namespace Agreement.Helpers
         }
         public override ResultType ResultType => ResultType.NotFound;
 
-        public override List<string> Errors => new List<string> { _error ?? "The input was not found." };
+        public override string Error =>  _error ?? "The input was not found." ;
 
         public override T Data => default(T);
     }

@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Agreement.Helpers;
 using Agreement.Models;
-using Agreement.Services;
+using Agreement.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +39,15 @@ namespace Agreement.Controllers
         {
 
             Result<AgreementModel> result = _businessService.GetAgreementModel(uniqueId);
-            if (result.ResultType == ResultType.NotFound) return NotFound(result.Errors);
+            switch (result.ResultType)
+            {
+                case ResultType.BadRequest:
+                    return BadRequest(result.Error);
+                case ResultType.NotFound:
+                    return NotFound(result.Error);
+                default: 
+                    break;
+            }
             return result.Data;
         }
 
@@ -75,8 +83,18 @@ namespace Agreement.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<AgreementModel> Post(AgreementModel agreementModel)
         {
-            
-            return _businessService.PostAgreementModel(agreementModel); 
+            Result<AgreementModel> result = _businessService.PostAgreementModel(agreementModel);
+            switch (result.ResultType)
+            {
+                case ResultType.BadRequest:
+                    return BadRequest(result.Error);
+                case ResultType.NotFound:
+                    return NotFound(result.Error);
+                default:
+                    break;
+            }
+            return result.Data;
+           
         }
 
 

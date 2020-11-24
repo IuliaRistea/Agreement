@@ -1,4 +1,5 @@
 ﻿using Agreement.Helpers;
+using Agreement.Interfaces;
 using Agreement.Models;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,13 @@ namespace Agreement.Services
     {
         private IAgreementRepository _agreementRepository;
         private IErrorService _errorService;
+        private IValidatorService _validatorService;
 
-        public BusinessService(IAgreementRepository agreementRepository, IErrorService errorService)
+        public BusinessService(IAgreementRepository agreementRepository, IErrorService errorService, IValidatorService validatorService)
         {
             _agreementRepository = agreementRepository;
             _errorService = errorService;
+            _validatorService = validatorService;
         }
 
         public ICollection<AgreementModel> GetAgreements()
@@ -28,20 +31,43 @@ namespace Agreement.Services
             if (agreementModel == null)
             {
                 Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
-                if (_errorService.AddError(uniqueId, result, RequestType.Get) == false)
-                    Console.WriteLine("Errors service failed");
+                if (_errorService.AddError(uniqueId, result, "Get") == false)
+                    Console.WriteLine("Error service failed");
                 return result;
             }
             return new SuccessResult<AgreementModel>(agreementModel);
         }
 
 
-        public AgreementModel PostAgreementModel(AgreementModel agreementModel)
+        public Result<AgreementModel> PostAgreementModel(AgreementModel agreementModel)
         {
-            bool success = _agreementRepository.CreateAgreement(agreementModel);
-            if (!success) return null;
+            var validateResult = _validatorService.ValidateAgreement(agreementModel);
 
-            return agreementModel;
+            if (validateResult.ResultType != ResultType.Ok)
+            {
+                if (_errorService.AddError((agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"), validateResult, "Post") == false)
+                    Console.WriteLine("Error service failed");
+                return validateResult;
+            }
+
+            try { 
+                bool success = _agreementRepository.CreateAgreement(agreementModel);
+                if (!success) 
+                {
+                    Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement already exists!");
+                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+            }catch(Exception e) {
+
+                Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement create failed!");
+                if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                    Console.WriteLine("Error service failed");
+                return result;
+            }
+            return new SuccessResult<AgreementModel>(agreementModel);
+
         }
 
         public bool DeleteAgreementModel(string uniqueId)

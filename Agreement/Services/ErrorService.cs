@@ -1,11 +1,8 @@
 ﻿using Agreement.Models;
-using Agreement.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Agreement.Interfaces;
+using Agreement.Helpers;
 
-namespace Agreement.Helpers
+namespace Agreement.Services
 {
     public class ErrorService : IErrorService
     {
@@ -15,14 +12,15 @@ namespace Agreement.Helpers
             _errorRepository = errorRepository;
         }
 
-        public bool AddError(string uniqueId, Result<AgreementModel> result, RequestType requestType)
+        public bool AddError(string uniqueId, Result<AgreementModel> result, string requestType)
         {
+            
             ErrorModel errorModel = new ErrorModel()
             {
                 UniqueId = uniqueId,
                 RequestType = requestType,
-                ResultType = result.ResultType,
-                ErrorMessage = result.Errors.ToString(),
+                ResultType = result.ResultType.ToString("G"),
+                ErrorMessage = result.Error
             };
 
             return _errorRepository.CreateError(errorModel);

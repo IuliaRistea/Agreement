@@ -34,10 +34,10 @@ namespace Agreement.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UniqueId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ResultType = table.Column<int>(type: "int", nullable: false),
+                    UniqueId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResultType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RequestType = table.Column<int>(type: "int", nullable: false)
+                    RequestType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

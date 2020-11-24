@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Agreement.Services
+namespace Agreement.Interfaces
 {
     public interface IErrorService
     {
-        public bool AddError(string uniqueId, Result<AgreementModel> result, RequestType requestType);
+        public bool AddError(string uniqueId, Result<AgreementModel> result, string requestType);
     }
 }

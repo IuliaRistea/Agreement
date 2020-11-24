@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Agreement.Services
+namespace Agreement.Interfaces
 {
     public interface IAgreementRepository
     {

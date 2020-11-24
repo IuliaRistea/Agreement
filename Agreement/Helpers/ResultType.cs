@@ -11,6 +11,7 @@ namespace Agreement.Helpers
         Invalid,
         NotFound,
         PermissionDenied,
-        Unexpected
+        Unexpected,
+        BadRequest
     }
 }
