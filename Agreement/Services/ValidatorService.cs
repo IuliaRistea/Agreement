@@ -10,62 +10,62 @@ namespace Agreement.Services
 {
     public class ValidatorService : IValidatorService
     {
-        public Result<AgreementModel> ValidateAgreement(AgreementModel agreementModel)
+        public Status ValidateAgreement(AgreementModel agreementModel)
         {
             if (agreementModel == null)
-                return new BadRequestResult<AgreementModel>("Agreement model is null");
+                return new ErrorStatus("Agreement model is null");
 
             List<string> errors = new List<string>();
 
             //Validare CNP/CUI
-            string validareCNPCUI = ValidareCNPCUI(agreementModel.CNPCUI);
-            if (validareCNPCUI != "ok")
-                errors.Add(validareCNPCUI);
+            Status validareCNPCUI = ValidareCNPCUI(agreementModel.CNPCUI);
+            if (validareCNPCUI.ResultType != ResultType.Ok)
+                errors.AddRange(validareCNPCUI.Errors);
 
             //Validare Judet
-            string validareJudet = ValidareJudet(agreementModel.Judet);
-            if (validareJudet != "ok")
-                errors.Add(validareJudet);
+            Status validareJudet = ValidareJudet(agreementModel.Judet);
+            if (validareJudet.ResultType != ResultType.Ok)
+                errors.AddRange(validareJudet.Errors);
 
             //Validare nr. Telefon
-            string validareTelefon = ValidareTelefon(agreementModel.NrTelefon);
-            if (validareTelefon != "ok")
-                errors.Add(validareTelefon);
+            Status validareTelefon = ValidareTelefon(agreementModel.NrTelefon);
+            if (validareTelefon.ResultType != ResultType.Ok)
+                errors.AddRange(validareTelefon.Errors);
 
             //Validare nume si prenume in caz de CNP.
-            string validareNumePrenume = ValidareNumePrenume(validareCNPCUI, agreementModel.CNPCUI, agreementModel.Nume, agreementModel.Prenume);
-            if (validareNumePrenume != "ok")
-                errors.Add(validareNumePrenume);
+            Status validareNumePrenume = ValidareNumePrenume(validareCNPCUI, agreementModel.CNPCUI, agreementModel.Nume, agreementModel.Prenume);
+            if (validareNumePrenume.ResultType != ResultType.Ok)
+                errors.AddRange(validareNumePrenume.Errors);
 
             //Validare denumire companie in caz de CUI.
-            string validareCompanie = ValidareCompanie(validareCNPCUI, agreementModel.CNPCUI, agreementModel.DenumireCompanie);
-            if (validareCompanie != "ok")
-                errors.Add(validareCompanie);
+            Status validareCompanie = ValidareCompanie(validareCNPCUI, agreementModel.CNPCUI, agreementModel.DenumireCompanie);
+            if (validareCompanie.ResultType != ResultType.Ok)
+                errors.AddRange(validareCompanie.Errors);
 
             //Validare email
-            string validareEmail = ValidareEmail(agreementModel.Email);
-            if (validareEmail != "ok")
-                errors.Add(validareEmail);
+            Status validareEmail = ValidareEmail(agreementModel.Email);
+            if (validareEmail.ResultType != ResultType.Ok)
+                errors.AddRange(validareEmail.Errors);
 
             //Validare acord de prelucrare a datelor cu caracter personal
-            string validareAcordPrelucrareDate = ValidareAcordPrelucrareDate(agreementModel.AcordPrelucrareDate);
-            if (validareAcordPrelucrareDate != "ok")
-                errors.Add(validareAcordPrelucrareDate);
+            Status validareAcordPrelucrareDate = ValidareAcordPrelucrareDate(agreementModel.AcordPrelucrareDate);
+            if (validareAcordPrelucrareDate.ResultType != ResultType.Ok)
+                errors.AddRange(validareAcordPrelucrareDate.Errors);
 
             //Validare comunicare email, sms, posta
             if (agreementModel.ComunicareEmail == false && agreementModel.ComunicarePosta==false && agreementModel.ComunicareSMS == false)
                 errors.Add("One of Email, SMS, POST must be true");
 
             if (errors.Any())
-                return new BadRequestResult<AgreementModel>(errors);
+                return new ErrorStatus(errors);
 
-            return new SuccessResult<AgreementModel>(agreementModel);
+            return new OkStatus();
         }
-        private string ValidareJudet(string judet)
+        private Status ValidareJudet(string judet)
         {
             if(judet == null)
             {
-                return "Judet not set";
+                return new ErrorStatus("Judet not set");
             }
             string[] judeteArray = { 
                 "AB", "AR", "AG",
@@ -85,112 +85,113 @@ namespace Agreement.Services
             HashSet<string> judete = new HashSet<string>(judeteArray);
 
             if (!judete.Contains(judet.ToUpper()))
-                return "Judet invalid";
-            return "ok";
+                return new ErrorStatus("Judet invalid");
+            return new OkStatus();
         }
 
-        private string ValidareCNPCUI(string uniqueId)
+        private Status ValidareCNPCUI(string uniqueId)
         {
 
             if (uniqueId == null)
             {
-                return "CNP/CUI is not set";
+                return new ErrorStatus("CNP/CUI is not set");
             }
             if (uniqueId.Length != 7)
             {
-                return "CNP/CUI invalid lenght";
+                return new ErrorStatus("CNP/CUI invalid lenght");
             }
             if (!uniqueId.StartsWith("CNP") && !uniqueId.StartsWith("CUI"))
             {
-                return "CNP/CUI doesn't start with valid prefix (CNP,CUI)";
+                return new ErrorStatus("CNP/CUI doesn't start with valid prefix (CNP,CUI)");
             }
             if (!uniqueId.Substring(3).All(char.IsDigit))
             {
-               return "Last 4 characters are not digits";
+               return new ErrorStatus("Last 4 characters are not digits");
             }
 
-            return "ok";
+            return new OkStatus();
         }
 
-        private string ValidareTelefon(string telefon)
+        private Status ValidareTelefon(string telefon)
         {
-            if(telefon == null)
-            {
-                return "Number is not set";
+            if(telefon == null) {
+                return new ErrorStatus("Number is not set");
             }
             if(!telefon.StartsWith("555"))
             {
-                return "Number doesn't start with prefix 555 ";
+                return new ErrorStatus("Number doesn't start with prefix 555 ");
             }
             if (!telefon.Substring(3).All(char.IsDigit))
             {
-                return "Last 6 characters are not digit";
+                return new ErrorStatus("Last 6 characters are not digit");
             }
-            return "ok";
+            return new OkStatus();
         }
 
-        private string ValidareNumePrenume(string validareCNPCUI,string uniqueCNP, string nume, string prenume)
+        private Status ValidareNumePrenume(Status validareCNPCUI,string uniqueCNP, string nume, string prenume)
         {
-            if (validareCNPCUI != "ok")
-                return "ok";
+            if (validareCNPCUI.ResultType != ResultType.Ok)
+                return new OkStatus();
 
             if (!uniqueCNP.StartsWith("CNP"))
-                return "ok";
-            if (nume == null)
-            {
-                return "Nume is not set";
+                return new OkStatus();
+
+            if (nume == null) {
+                return new ErrorStatus("Nume is not set");
             }
             if (prenume == null)
             {
-                return "Prenume is not set";
+                return new ErrorStatus("Prenume is not set");
             }
 
             if (!nume.All(char.IsLetter))
             {
-                return "Nume contains other symbols";
+                return new ErrorStatus ("Nume contains other symbols");
             }
             if (!prenume.All(char.IsLetter))
             {
-                return "Prenume contains other symbols";
+                return new ErrorStatus("Prenume contains other symbols");
             }
 
-            return "ok";
+            return new OkStatus();
         }
-        
-        private string ValidareCompanie(string validareCNPCUI, string uniqueCUI, string companie)
+
+        private Status ValidareCompanie(Status validareCNPCUI, string uniqueCUI, string companie)
         {
-            if (validareCNPCUI != "ok")
-                return "ok";
+            if (validareCNPCUI.ResultType != ResultType.Ok)
+                return new OkStatus();
 
             if (!uniqueCUI.StartsWith("CUI"))
-                return "ok";
+                return new OkStatus();
 
             if (companie == null)
-                return "DenumireCompanie is not set";
+                return new ErrorStatus("DenumireCompanie is not set");
 
-            return "ok";
+            return new OkStatus();
         }
 
-       private string ValidareEmail(string email)
+       private Status ValidareEmail(string email)
         {
             try
             {
                 var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email ? "ok" : "Email invalid";
+                if (addr.Address != email)
+                    return new ErrorStatus("Email invalid");
+                return new OkStatus();
             }
             catch
             {
-                return "Email invalid";
+                return new ErrorStatus("Email invalid");
             }
         }
 
-        private string ValidareAcordPrelucrareDate(bool gdpr)
+        private Status ValidareAcordPrelucrareDate(bool gdpr)
         {
             if(gdpr == false)
             {
-                return "Acord Prelucrare date must be true";
+                return new ErrorStatus("Acord Prelucrare date must be true");
             }
-            return "ok";
+            return new OkStatus();
 
         }
 

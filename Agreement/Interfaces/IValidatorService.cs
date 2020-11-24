@@ -9,6 +9,6 @@ namespace Agreement.Interfaces
 {
     public interface IValidatorService
     {
-        public Result<AgreementModel> ValidateAgreement(AgreementModel agreementModel);
+        public Status ValidateAgreement(AgreementModel agreementModel);
     }
 }

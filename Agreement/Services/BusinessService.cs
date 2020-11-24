@@ -32,7 +32,7 @@ namespace Agreement.Services
                 if (agreementModel == null)
                 {
                     Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
-                    if (_errorService.AddError(uniqueId, result, "Get") == false)
+                    if (_errorService.AddError(uniqueId, result.ResultType, result.Errors, "Get") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
@@ -51,16 +51,22 @@ namespace Agreement.Services
 
             if (validateResult.ResultType != ResultType.Ok)
             {
-                if (_errorService.AddError((agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"), validateResult, "Post") == false)
+                Result<AgreementModel> result = new BadRequestResult<AgreementModel>(validateResult.Errors);
+                if (_errorService.AddError(
+                    (agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"),
+                    validateResult.ResultType,
+                    validateResult.Errors, "Post") == false)
+                {
                     Console.WriteLine("Error service failed");
-                return validateResult;
+                }
+                return result;
             }
 
             try {
                 if (_agreementRepository.AgreementExists(agreementModel.CNPCUI))
                 {
                     Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement already exist!");
-                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                    if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Post") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
@@ -70,14 +76,14 @@ namespace Agreement.Services
                 if (!success)
                 {
                     Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement create failed!");
-                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                    if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Post") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
             } catch {
 
                 Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
-                if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Post") == false)
                     Console.WriteLine("Error service failed");
                 return result;
             }
@@ -90,7 +96,7 @@ namespace Agreement.Services
             if (_agreementRepository.AgreementExists(uniqueId) == false )
             {
                 Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
-                if (_errorService.AddError(uniqueId, result, "Delete") == false)
+                if (_errorService.AddError(uniqueId, result.ResultType, result.Errors, "Delete") == false)
                     Console.WriteLine("Error service failed");
                 return result;
             }
@@ -101,7 +107,7 @@ namespace Agreement.Services
                 if (!success)
                 {
                     Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement update failed!");
-                    if (_errorService.AddError(uniqueId, result, "Delete") == false)
+                    if (_errorService.AddError(uniqueId, result.ResultType, result.Errors, "Delete") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
@@ -110,7 +116,7 @@ namespace Agreement.Services
             {
 
                 Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
-                if (_errorService.AddError(uniqueId, result, "Put") == false)
+                if (_errorService.AddError(uniqueId, result.ResultType, result.Errors, "Put") == false)
                     Console.WriteLine("Error service failed");
                 return result;
             }
@@ -125,9 +131,16 @@ namespace Agreement.Services
 
             if (validateResult.ResultType != ResultType.Ok)
             {
-                if (_errorService.AddError((agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"), validateResult, "Put") == false)
+                Result<AgreementModel> result = new BadRequestResult<AgreementModel>(validateResult.Errors);
+                if (_errorService.AddError(
+                    (agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"),
+                    result.ResultType,
+                    result.Errors,
+                    "Put") == false)
+                {
                     Console.WriteLine("Error service failed");
-                return validateResult;
+                }
+                return result;
             }
 
             try
@@ -135,7 +148,7 @@ namespace Agreement.Services
                 if (!_agreementRepository.AgreementExists(agreementModel.CNPCUI))
                 {
                     Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
-                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                    if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Put") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
@@ -144,7 +157,7 @@ namespace Agreement.Services
                 if (!success)
                 {
                     Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement update failed!");
-                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                    if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Put") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
@@ -153,7 +166,7 @@ namespace Agreement.Services
             {
 
                 Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
-                if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                if (_errorService.AddError(agreementModel.CNPCUI, result.ResultType, result.Errors, "Put") == false)
                     Console.WriteLine("Error service failed");
                 return result;
             }

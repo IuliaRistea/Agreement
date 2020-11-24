@@ -9,6 +9,6 @@ namespace Agreement.Interfaces
 {
     public interface IErrorService
     {
-        public bool AddError(string uniqueId, Result<AgreementModel> result, string requestType);
+        public bool AddError(string uniqueId, ResultType resultType, List<string> errors, string requestType);
     }
 }
