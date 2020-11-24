@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Agreement.Helpers;
 using Agreement.Models;
 using Agreement.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Agreement.Controllers
 {
     [Produces("application/json")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class APIController : ControllerBase
@@ -25,9 +22,12 @@ namespace Agreement.Controllers
             _businessService = businessService;
         }
 
+        [ProducesResponseType(200)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public ICollection<AgreementModel> Get()
         {
+            
             return _businessService.GetAgreements();
         }
 
@@ -37,7 +37,7 @@ namespace Agreement.Controllers
         [ProducesResponseType(500)]
         public ActionResult<AgreementModel> Get(string uniqueId)
         {
-
+         
             Result<AgreementModel> result = _businessService.GetAgreementModel(uniqueId);
             switch (result.ResultType)
             {

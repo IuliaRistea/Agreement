@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Agreement.Helpers;
 using Agreement.Interfaces;
 using Agreement.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,8 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Agreement
 {
@@ -32,6 +35,7 @@ namespace Agreement
         {
 
             services.AddControllers();
+            services.AddCors();
            // services.AddMvc();
 
             var connectionString = Configuration["connectionStrings:agreementDbConnectionString"];
@@ -68,8 +72,49 @@ namespace Agreement
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", info);
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme."
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+
+                    }
+                });
             });
-          
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                   // ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["JwtToken:Issuer"],
+                    ValidAudience = Configuration["JwtToken:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken:SecretKey"])) 
+                };
+            });
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,14 +126,6 @@ namespace Agreement
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-/*            app.UseSwagger();*/
             app.UseSwagger(c =>
             {
                 c.SerializeAsV2 = true;
@@ -97,8 +134,19 @@ namespace Agreement
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json",
                 "Swagger Demo API v1");
-                
+
             });
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseCors(x => x
+               .AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
