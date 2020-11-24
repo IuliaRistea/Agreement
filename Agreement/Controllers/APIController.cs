@@ -41,10 +41,10 @@ namespace Agreement.Controllers
             Result<AgreementModel> result = _businessService.GetAgreementModel(uniqueId);
             switch (result.ResultType)
             {
-                case ResultType.BadRequest:
-                    return BadRequest(result.Error);
+                case ResultType.Unexpected:
+                    return StatusCode(500,result.Errors);
                 case ResultType.NotFound:
-                    return NotFound(result.Error);
+                    return NotFound(result.Errors);
                 default: 
                     break;
             }
@@ -86,10 +86,10 @@ namespace Agreement.Controllers
             Result<AgreementModel> result = _businessService.PostAgreementModel(agreementModel);
             switch (result.ResultType)
             {
+                case ResultType.Unexpected:
+                    return StatusCode(500, result.Errors);
                 case ResultType.BadRequest:
-                    return BadRequest(result.Error);
-                case ResultType.NotFound:
-                    return NotFound(result.Error);
+                    return BadRequest(result.Errors);
                 default:
                     break;
             }
@@ -99,16 +99,46 @@ namespace Agreement.Controllers
 
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<AgreementModel> Put(AgreementModel agreementModel)
         {
 
-            return _businessService.PutAgreementModel(agreementModel);
+            Result<AgreementModel> result = _businessService.PutAgreementModel(agreementModel);
+            switch (result.ResultType)
+            {
+                case ResultType.Unexpected:
+                    return StatusCode(500, result.Errors);
+                case ResultType.BadRequest:
+                    return BadRequest(result.Errors);
+                case ResultType.NotFound:
+                    return NotFound(result.Errors);
+                default:
+                    break;
+            }
+            return result.Data;
         }
 
         [HttpDelete("{uniqueId}")]
-        public bool Delete(string uniqueId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult Delete(string uniqueId)
         {
-            return _businessService.DeleteAgreementModel(uniqueId);
+            Result<AgreementModel> result = _businessService.DeleteAgreementModel(uniqueId);
+            switch (result.ResultType)
+            {
+                case ResultType.Unexpected:
+                    return StatusCode(500, result.Errors);
+                case ResultType.BadRequest:
+                    return BadRequest(result.Errors);
+                case ResultType.NotFound:
+                    return NotFound(result.Errors);
+                default:
+                    break;
+            }
+            return Ok();
         }
     }
 }

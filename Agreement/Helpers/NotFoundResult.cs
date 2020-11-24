@@ -7,15 +7,17 @@ namespace Agreement.Helpers
 {
     public class NotFoundResult<T> : Result<T>
     {
-        private string _error;
+        private List<string> _errors = new List<string>();
         public NotFoundResult(string error)
         {
-            _error = error;
+            _errors.Add(error);
+        }
+        public NotFoundResult(List<string> errors)
+        {
+            _errors.AddRange(errors);
         }
         public override ResultType ResultType => ResultType.NotFound;
-
-        public override string Error =>  _error ?? "The input was not found." ;
-
+        public override List<string> Errors => _errors ?? new List<string> { "The input was not found." };
         public override T Data => default(T);
     }
 }

@@ -27,15 +27,21 @@ namespace Agreement.Services
 
         public Result<AgreementModel> GetAgreementModel(string uniqueId)
         {
-            var agreementModel = _agreementRepository.GetAgreement(uniqueId);
-            if (agreementModel == null)
-            {
-                Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
-                if (_errorService.AddError(uniqueId, result, "Get") == false)
-                    Console.WriteLine("Error service failed");
-                return result;
+            try {
+                var agreementModel = _agreementRepository.GetAgreement(uniqueId);
+                if (agreementModel == null)
+                {
+                    Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
+                    if (_errorService.AddError(uniqueId, result, "Get") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+                return new SuccessResult<AgreementModel>(agreementModel);
             }
-            return new SuccessResult<AgreementModel>(agreementModel);
+            catch (Exception e)
+            {
+                return new UnexpectedResult<AgreementModel>();
+            }
         }
 
 
@@ -50,18 +56,27 @@ namespace Agreement.Services
                 return validateResult;
             }
 
-            try { 
-                bool success = _agreementRepository.CreateAgreement(agreementModel);
-                if (!success) 
+            try {
+                if (_agreementRepository.AgreementExists(agreementModel.CNPCUI))
                 {
-                    Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement already exists!");
+                    Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement already exist!");
                     if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
                         Console.WriteLine("Error service failed");
                     return result;
                 }
-            }catch(Exception e) {
 
-                Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement create failed!");
+                bool success = _agreementRepository.CreateAgreement(agreementModel);
+
+                if (!success)
+                {
+                    Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement create failed!");
+                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+            } catch {
+
+                Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
                 if (_errorService.AddError(agreementModel.CNPCUI, result, "Post") == false)
                     Console.WriteLine("Error service failed");
                 return result;
@@ -70,24 +85,79 @@ namespace Agreement.Services
 
         }
 
-        public bool DeleteAgreementModel(string uniqueId)
+        public Result<AgreementModel> DeleteAgreementModel(string uniqueId)
         {
-            if (_agreementRepository.AgreementExists(uniqueId) == false)
-                return false;
-            bool success = _agreementRepository.DeleteAgreement(uniqueId);
-            return success;
+            if (_agreementRepository.AgreementExists(uniqueId) == false )
+            {
+                Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
+                if (_errorService.AddError(uniqueId, result, "Delete") == false)
+                    Console.WriteLine("Error service failed");
+                return result;
+            }
+            try
+            {
+                bool success = _agreementRepository.DeleteAgreement(uniqueId);
+
+                if (!success)
+                {
+                    Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement update failed!");
+                    if (_errorService.AddError(uniqueId, result, "Delete") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+            }
+            catch
+            {
+
+                Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
+                if (_errorService.AddError(uniqueId, result, "Put") == false)
+                    Console.WriteLine("Error service failed");
+                return result;
+            }
+
+
+            return new SuccessResult<AgreementModel>();
         }
 
-        public AgreementModel PutAgreementModel(AgreementModel agreementModel)
+        public Result<AgreementModel> PutAgreementModel(AgreementModel agreementModel)
         {
+            var validateResult = _validatorService.ValidateAgreement(agreementModel);
 
-            if (_agreementRepository.AgreementExists(agreementModel.CNPCUI) == false)
-                return null;
-            bool success = _agreementRepository.UpdateAgreement(agreementModel);
+            if (validateResult.ResultType != ResultType.Ok)
+            {
+                if (_errorService.AddError((agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"), validateResult, "Put") == false)
+                    Console.WriteLine("Error service failed");
+                return validateResult;
+            }
 
-            if (!success) return null;
+            try
+            {
+                if (!_agreementRepository.AgreementExists(agreementModel.CNPCUI))
+                {
+                    Result<AgreementModel> result = new NotFoundResult<AgreementModel>("Agreement not found!");
+                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+                bool success = _agreementRepository.UpdateAgreement(agreementModel);
+               
+                if (!success)
+                {
+                    Result<AgreementModel> result = new BadRequestResult<AgreementModel>("Bad request: Agreement update failed!");
+                    if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                        Console.WriteLine("Error service failed");
+                    return result;
+                }
+            }
+            catch 
+            {
 
-            return agreementModel;
+                Result<AgreementModel> result = new UnexpectedResult<AgreementModel>();
+                if (_errorService.AddError(agreementModel.CNPCUI, result, "Put") == false)
+                    Console.WriteLine("Error service failed");
+                return result;
+            }
+            return new SuccessResult<AgreementModel>(agreementModel);
 
         }
     }

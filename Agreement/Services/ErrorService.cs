@@ -20,7 +20,7 @@ namespace Agreement.Services
                 UniqueId = uniqueId,
                 RequestType = requestType,
                 ResultType = result.ResultType.ToString("G"),
-                ErrorMessage = result.Error
+                ErrorMessage = string.Join(" | ", result.Errors)
             };
 
             return _errorRepository.CreateError(errorModel);

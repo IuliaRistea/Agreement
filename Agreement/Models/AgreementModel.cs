@@ -22,6 +22,7 @@ namespace Agreement.Models
         [JsonInclude]
         public string Judet { get; set; }
         [JsonInclude]
+        [StringLength(maximumLength: 9, MinimumLength = 9, ErrorMessage = "Telefonul are lungime invalida.")]
         public string NrTelefon { get; set; }
         [JsonInclude]
         public string Email { get; set; }

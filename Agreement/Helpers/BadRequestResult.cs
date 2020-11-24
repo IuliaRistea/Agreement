@@ -5,20 +5,19 @@ using System.Threading.Tasks;
 
 namespace Agreement.Helpers
 {
-    public class BadRequestResult<T> :Result<T>
+    public class BadRequestResult<T> : Result<T>
     {
-        private string _error;
+        private List<string> _errors = new List<string>();
         public BadRequestResult(string error)
         {
-            _error = error;
+            _errors.Add(error);
         }
         public BadRequestResult(List<string> errors)
         {
-            _error = string.Join(". ", errors );
+            _errors.AddRange(errors);
         }
         public override ResultType ResultType => ResultType.BadRequest;
-
-        public override string Error =>  _error ?? "Bad request." ;
+        public override List<string> Errors => _errors ?? new List<string> { "Bad request." };
 
         public override T Data => default(T);
     }

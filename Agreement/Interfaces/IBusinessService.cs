@@ -16,7 +16,7 @@ namespace Agreement.Interfaces
 
         public Result<AgreementModel> PostAgreementModel(AgreementModel agreementModel);
 
-        public bool DeleteAgreementModel(string uniqueId);
-        public AgreementModel PutAgreementModel(AgreementModel agreementModel);
+        public Result<AgreementModel> DeleteAgreementModel(string uniqueId);
+        public Result<AgreementModel> PutAgreementModel(AgreementModel agreementModel);
     }
 }
