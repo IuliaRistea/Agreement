@@ -13,11 +13,11 @@ namespace Agreement.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class APIController : ControllerBase
+    public class AgreementController : ControllerBase
     {
         private IBusinessService _businessService;
 
-        public APIController(IBusinessService businessService)
+        public AgreementController(IBusinessService businessService)
         {
             _businessService = businessService;
         }

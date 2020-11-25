@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Agreement.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -15,8 +15,7 @@ namespace Agreement.Controllers
     {
         private readonly IConfiguration _config;
 
-        public AuthController(IConfiguration config)
-        {
+        public AuthController(IConfiguration config) {
             _config = config;
         }
 
@@ -24,18 +23,13 @@ namespace Agreement.Controllers
         [HttpPost]
         public IActionResult CreateToken([FromBody] LoginModel login)
         {
-            if (login == null) return Unauthorized();
-            string tokenString = string.Empty;
-            bool validUser = Authenticate(login);
-            if (validUser)
-            {
-                tokenString = BuildToken();
+            if (login == null) {
+                return BadRequest();
             }
-            else
-            {
+            if (!Authenticate(login)) {
                 return Unauthorized();
             }
-            return Ok(new { Token = tokenString });
+            return Ok(new { Token = BuildToken() });
         }
 
         private string BuildToken()
@@ -53,19 +47,9 @@ namespace Agreement.Controllers
 
         private bool Authenticate(LoginModel login)
         {
-            bool validUser = false;
-
-            if (login.Username == "user" && login.Password == "pass")
-        {
-                validUser = true;
-            }
-            return validUser;
-        }
-
-        public class LoginModel
-        {
-            public string Username { get; set; }
-            public string Password { get; set; }
+            if (login.Username == _config["JwtToken:User"] && login.Password == _config["JwtToken:Pass"])
+                return true;
+            return false;
         }
     }
  }

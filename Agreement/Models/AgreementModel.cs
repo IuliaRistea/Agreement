@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Agreement.Models
 {
@@ -11,30 +6,18 @@ namespace Agreement.Models
     {
         [Key]
         [StringLength(maximumLength:7, MinimumLength = 7, ErrorMessage = "Codul unic are lungime invalida.")]
-        [JsonInclude]
         public string CNPCUI { get; set; }
-        [JsonInclude]
         public string Nume { get; set; }
-        [JsonInclude]
         public string Prenume { get; set; }
-        [JsonInclude]
         public string DenumireCompanie { get; set; }
-        [JsonInclude]
         public string Judet { get; set; }
-        [JsonInclude]
         [StringLength(maximumLength: 9, MinimumLength = 9, ErrorMessage = "Telefonul are lungime invalida.")]
         public string NrTelefon { get; set; }
-        [JsonInclude]
         public string Email { get; set; }
-        [JsonInclude]
         public bool AcordPrelucrareDate{ get; set; }
-        [JsonInclude]
         public bool ComunicareMarketing { get; set; }
-        [JsonInclude]
         public bool ComunicareEmail { get; set; }
-        [JsonInclude]
         public bool ComunicareSMS { get; set; }
-        [JsonInclude]
         public bool ComunicarePosta { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Agreement.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Agreement.Services
 {

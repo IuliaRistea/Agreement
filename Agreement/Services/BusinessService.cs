@@ -54,8 +54,8 @@ namespace Agreement.Services
                 Result<AgreementModel> result = new BadRequestResult<AgreementModel>(validateResult.Errors);
                 if (_errorService.AddError(
                     (agreementModel.CNPCUI != null ? agreementModel.CNPCUI : "invalid"),
-                    validateResult.ResultType,
-                    validateResult.Errors, "Post") == false)
+                    result.ResultType,
+                    result.Errors, "Post") == false)
                 {
                     Console.WriteLine("Error service failed");
                 }
